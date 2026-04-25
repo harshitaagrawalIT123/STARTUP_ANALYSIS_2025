@@ -18,122 +18,28 @@ html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
     background-attachment: fixed;
 }
 
-/* ✅ Transparent header — never display:none */
+/* 🔒 LOCKSIDEBAR: Remove collapse arrow and fix width */
+[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
+[data-testid="stSidebar"] {
+    background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
+    border-right: 1px solid rgba(0,220,130,0.15);
+    min-width: 320px !important;
+    max-width: 320px !important;
+}
+[data-testid="stSidebar"] * { color: #c8e6d0 !important; }
+
+/* ✅ Transparent header & Toolbar cleanup */
 [data-testid="stHeader"]     { background: transparent !important; border-bottom: none !important; }
 [data-testid="stToolbar"]    { display: none !important; }
 [data-testid="stDecoration"] { display: none !important; }
 
-/* Hide native toggle — replaced by floating button */
-[data-testid="collapsedControl"] { display: none !important; }
-
-[data-testid="stSidebar"] {
-    background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
-    border-right: 1px solid rgba(0,220,130,0.15);
-}
-[data-testid="stSidebar"] * { color: #c8e6d0 !important; }
-
-h1, h2, h3,
-[data-testid="stMarkdownContainer"] h1,
-[data-testid="stMarkdownContainer"] h2,
-[data-testid="stMarkdownContainer"] h3 {
-    font-family: 'Syne', sans-serif !important;
-    color: #ffffff !important;
-}
-[data-testid="stMarkdownContainer"] p,
-[data-testid="stMarkdownContainer"] li,
-[data-testid="stMarkdownContainer"] strong { color: #a8c8d8 !important; }
-
-hr { border-color: rgba(0,220,130,0.12) !important; }
-
-[data-testid="metric-container"] {
-    background: rgba(11,31,53,0.85);
-    border: 1px solid rgba(0,220,130,0.15);
-    border-radius: 12px;
-    padding: 16px !important;
-}
-[data-testid="metric-container"] label { color: #5a8fa8 !important; }
-[data-testid="metric-container"] [data-testid="stMetricValue"] {
-    color: #ffffff !important;
-    font-family: 'Syne', sans-serif !important;
-}
-
-[data-testid="stAlert"] {
-    background: rgba(11,31,53,0.9) !important;
-    border: 1px solid rgba(0,220,130,0.2) !important;
-    border-radius: 10px !important;
-    color: #a8c8d8 !important;
-}
-
-[data-testid="stExpander"] {
-    background: rgba(11,31,53,0.7) !important;
-    border: 1px solid rgba(0,220,130,0.12) !important;
-    border-radius: 12px !important;
-}
-
-[data-testid="stButton"] button[kind="primary"] {
-    background: linear-gradient(90deg, #00dc82, #00b4d8) !important;
-    color: #050d1a !important;
-    font-family: 'Syne', sans-serif !important;
-    font-weight: 700 !important;
-    border: none !important;
-    border-radius: 10px !important;
-}
-[data-testid="stButton"] button[kind="primary"]:hover { opacity: 0.88 !important; }
+/* Keep your Metrics, Expander, and Button styles below... */
+[data-testid="metric-container"] { ... }
+...
 </style>
 """, unsafe_allow_html=True)
-
-# ─── FLOATING SIDEBAR TOGGLE ───────────────────────────────────────────────────
-st.components.v1.html("""
-<script>
-(function() {
-    function injectBtn() {
-        if (window.parent.document.getElementById('sb-toggle')) return;
-        const btn = window.parent.document.createElement('button');
-        btn.id = 'sb-toggle';
-        btn.innerHTML = '☰';
-        Object.assign(btn.style, {
-            position:       'fixed',
-            top:            '12px',
-            left:           '12px',
-            zIndex:         '999999',
-            width:          '40px',
-            height:         '40px',
-            background:     'rgba(0,220,130,0.15)',
-            border:         '1px solid rgba(0,220,130,0.4)',
-            borderRadius:   '8px',
-            color:          '#00dc82',
-            fontSize:       '18px',
-            cursor:         'pointer',
-            display:        'flex',
-            alignItems:     'center',
-            justifyContent: 'center',
-        });
-        btn.onmouseenter = () => btn.style.background = 'rgba(0,220,130,0.3)';
-        btn.onmouseleave = () => btn.style.background = 'rgba(0,220,130,0.15)';
-        btn.onclick = function() {
-            const doc = window.parent.document;
-            const selectors = [
-                '[data-testid="collapsedControl"] button',
-                '[data-testid="stSidebarCollapseButton"] button',
-                'button[aria-label="Close sidebar"]',
-                'button[aria-label="Open sidebar"]',
-                '[data-testid="stSidebar"] button',
-            ];
-            for (const sel of selectors) {
-                const el = doc.querySelector(sel);
-                if (el) { el.click(); return; }
-            }
-            const sb = doc.querySelector('[data-testid="stSidebar"]');
-            if (sb) sb.style.display = sb.style.display === 'none' ? '' : 'none';
-        };
-        window.parent.document.body.appendChild(btn);
-    }
-    injectBtn();
-    setTimeout(injectBtn, 500);
-    setTimeout(injectBtn, 2000);
-})();
-</script>
-""", height=0)
 
 
 # ─── PAGE CONTENT ──────────────────────────────────────────────────────────────

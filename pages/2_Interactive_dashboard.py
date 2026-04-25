@@ -17,20 +17,25 @@ html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
     background-attachment: fixed;
 }
 
-/* ✅ Transparent header — never display:none */
-[data-testid="stHeader"]     { background: transparent !important; border-bottom: none !important; }
-[data-testid="stToolbar"]    { display: none !important; }
-[data-testid="stDecoration"] { display: none !important; }
-
-/* Hide native toggle — replaced by floating button */
-[data-testid="collapsedControl"] { display: none !important; }
+/* 🔒 SIDEBAR LOCKDOWN — Forces sidebar to stay open */
+[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
 
 [data-testid="stSidebar"] {
     background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
     border-right: 1px solid rgba(0,220,130,0.15);
+    min-width: 320px !important; /* Prevents shrinking */
+    max-width: 320px !important;
 }
 [data-testid="stSidebar"] * { color: #c8e6d0 !important; }
 
+/* ✅ Header & Toolbar Cleanup */
+[data-testid="stHeader"]     { background: transparent !important; border-bottom: none !important; }
+[data-testid="stToolbar"]    { display: none !important; }
+[data-testid="stDecoration"] { display: none !important; }
+
+/* Typography */
 h1, h2, h3,
 [data-testid="stMarkdownContainer"] h1,
 [data-testid="stMarkdownContainer"] h2,
@@ -44,6 +49,7 @@ h1, h2, h3,
 
 hr { border-color: rgba(0,220,130,0.12) !important; }
 
+/* Metric Styling */
 [data-testid="metric-container"] {
     background: rgba(11,31,53,0.85);
     border: 1px solid rgba(0,220,130,0.15);
@@ -64,71 +70,6 @@ hr { border-color: rgba(0,220,130,0.12) !important; }
 }
 </style>
 """, unsafe_allow_html=True)
-
-# ─── FLOATING SIDEBAR TOGGLE (FIXED) ──────────────────────────────────────────
-st.components.v1.html("""
-<script>
-(function() {
-    const doc = window.parent.document;
-
-    function injectBtn() {
-        if (doc.getElementById('sb-toggle')) return;
-        
-        const btn = doc.createElement('button');
-        btn.id = 'sb-toggle';
-        btn.innerHTML = '☰';
-        Object.assign(btn.style, {
-            position:       'fixed',
-            top:            '12px',
-            left:           '12px',
-            zIndex:         '999999',
-            width:          '40px',
-            height:         '40px',
-            background:     'rgba(0,220,130,0.15)',
-            border:         '1px solid rgba(0,220,130,0.4)',
-            borderRadius:   '8px',
-            color:          '#00dc82',
-            fontSize:       '18px',
-            cursor:         'pointer',
-            display:        'flex',
-            alignItems:     'center',
-            justifyContent: 'center',
-            transition:     'background 0.3s'
-        });
-
-        btn.onclick = function() {
-            // 1. Try to find the 'Open' button first (when sidebar is closed)
-            const openBtn = doc.querySelector('button[aria-label="Open sidebar"]');
-            if (openBtn) {
-                openBtn.click();
-                return;
-            }
-
-            // 2. Try to find the 'Close' button (when sidebar is open)
-            const closeBtn = doc.querySelector('button[aria-label="Close sidebar"]');
-            if (closeBtn) {
-                closeBtn.click();
-                return;
-            }
-
-            // 3. Last resort fallback
-            const fallback = doc.querySelector('[data-testid="stSidebarCollapseButton"] button') || 
-                             doc.querySelector('[data-testid="collapsedControl"] button');
-            if (fallback) fallback.click();
-        };
-
-        btn.onmouseenter = () => btn.style.background = 'rgba(0,220,130,0.3)';
-        btn.onmouseleave = () => btn.style.background = 'rgba(0,220,130,0.15)';
-        
-        doc.body.appendChild(btn);
-    }
-
-    injectBtn();
-    // Re-check every second in case Streamlit refreshes the DOM
-    setInterval(injectBtn, 1000);
-})();
-</script>
-""", height=0)
 
 
 # ─── DATA ─────────────────────────────────────────────────────────────────────

@@ -3,25 +3,23 @@ import pandas as pd
 import plotly.express as px
 import joblib
 
+import streamlit as st
+
+st.set_page_config(layout="wide", initial_sidebar_state="expanded")
+
+# ─── GLOBAL STYLES (LOCKED SIDEBAR VERSION) ──────────────────────────────────
 st.markdown("""
 <style>
-    .block-container {
-        padding-left: 0rem !important;
-        padding-right: 0rem !important;
-        padding-top: 1rem !important;
-        max-width: none !important;
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+    /* Sidebar Lockdown Logic */
+    [data-testid="stSidebarCollapseButton"] {
+        display: none !important;
     }
-    .element-container {
-        width: 100% !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
-    .plotly-chart { width: 100% !important; }
-    [data-testid="column"] { width: 100% !important; padding: 0 0.5rem !important; }
-    [data-testid="stAppViewContainer"] {
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: none !important;
+    [data-testid="stSidebar"] {
+        background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
+        border-right: 1px solid rgba(0,220,130,0.15);
+        min-width: 320px !important;
     }
 
     .stApp {
@@ -29,121 +27,11 @@ st.markdown("""
         background-attachment: fixed;
     }
 
-    /* ✅ CORRECT — transparent, NOT display:none */
-    [data-testid="stHeader"]     { background: transparent !important; border-bottom: none !important; }
-    [data-testid="stToolbar"]    { display: none !important; }
-    [data-testid="stDecoration"] { display: none !important; }
-
-    /* Hide native toggle — replaced by floating button */
-    [data-testid="collapsedControl"] { display: none !important; }
-
-    [data-testid="stSidebar"] {
-        background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
-        border-right: 1px solid rgba(0,220,130,0.15);
-    }
-    [data-testid="stSidebar"] * { color: #c8e6d0 !important; }
-
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
-    html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
-
-    h1, h2, h3,
-    [data-testid="stMarkdownContainer"] h1,
-    [data-testid="stMarkdownContainer"] h2,
-    [data-testid="stMarkdownContainer"] h3 {
-        font-family: 'Syne', sans-serif !important;
-        color: #ffffff !important;
-        letter-spacing: -0.5px;
-    }
-    [data-testid="stMarkdownContainer"] h1 { font-size: 2rem !important; font-weight: 800 !important; }
-    [data-testid="stMarkdownContainer"] h2, .stMarkdown h2 {
-        color: #00dc82 !important;
-        font-size: 1.1rem !important;
-        letter-spacing: 0.5px;
-    }
-    [data-testid="stMarkdownContainer"] p,
-    [data-testid="stMarkdownContainer"] li,
-    [data-testid="stMarkdownContainer"] strong { color: #a8c8d8 !important; }
-
-    hr { border-color: rgba(0,220,130,0.12) !important; }
-
-    .js-plotly-plot .plotly,
-    .js-plotly-plot .plotly .bg { background: transparent !important; }
-
-    [data-testid="metric-container"] {
-        background: rgba(11,31,53,0.85);
-        border: 1px solid rgba(0,220,130,0.15);
-        border-radius: 12px;
-        padding: 16px !important;
-    }
-    [data-testid="metric-container"] label { color: #5a8fa8 !important; }
-    [data-testid="metric-container"] [data-testid="stMetricValue"] {
-        color: #ffffff !important;
-        font-family: 'Syne', sans-serif !important;
-    }
+    /* Keep the rest of your existing metric and font styling below... */
+    [data-testid="metric-container"] { ... }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── FLOATING SIDEBAR TOGGLE (ROBUST VERSION) ──────────────────────────────────
-st.components.v1.html("""
-<script>
-(function() {
-    const doc = window.parent.document;
-    
-    function injectBtn() {
-        if (doc.getElementById('sb-toggle')) return;
-
-        const btn = doc.createElement('button');
-        btn.id = 'sb-toggle';
-        btn.innerHTML = '☰';
-        Object.assign(btn.style, {
-            position: 'fixed',
-            top: '12px',
-            left: '12px',
-            zIndex: '999999',
-            width: '40px',
-            height: '40px',
-            background: 'rgba(0,220,130,0.15)',
-            border: '1px solid rgba(0,220,130,0.4)',
-            borderRadius: '8px',
-            color: '#00dc82',
-            fontSize: '18px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'background 0.3s'
-        });
-
-        btn.onclick = function() {
-            // Try to find the 'Open' button first (if sidebar is closed)
-            const openBtn = doc.querySelector('button[aria-label="Open sidebar"]');
-            // Try to find the 'Close' button (if sidebar is open)
-            const closeBtn = doc.querySelector('button[aria-label="Close sidebar"]');
-            
-            if (openBtn) {
-                openBtn.click();
-            } else if (closeBtn) {
-                closeBtn.click();
-            } else {
-                // Fallback: search for the specific SVG icon container Streamlit uses
-                const fallback = doc.querySelector('[data-testid="stSidebarCollapseButton"] button') || 
-                                 doc.querySelector('[data-testid="collapsedControl"] button');
-                if (fallback) fallback.click();
-            }
-        };
-
-        btn.onmouseenter = () => btn.style.background = 'rgba(0,220,130,0.3)';
-        btn.onmouseleave = () => btn.style.background = 'rgba(0,220,130,0.15)';
-        
-        doc.body.appendChild(btn);
-    }
-
-    // Run immediately and then check periodically if the button was removed by a page refresh
-    injectBtn();
-    setInterval(injectBtn, 1000);
-})();
-</script>
-""", height=0)
 
 
 # ─── PAGE CONTENT ──────────────────────────────────────────────────────────────

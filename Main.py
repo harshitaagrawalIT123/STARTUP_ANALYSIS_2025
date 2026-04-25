@@ -9,6 +9,17 @@ st.set_page_config(
 )
 
 # ─── GLOBAL STYLES ────────────────────────────────────────────────────────────
+import streamlit as st
+import pandas as pd
+
+st.set_page_config(
+    page_title="India Startup Pulse 2025",
+    page_icon="⚡",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# ─── GLOBAL STYLES (CLEANED) ──────────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
@@ -29,234 +40,24 @@ html, body, [class*="css"] {
 [data-testid="stToolbar"]    { display: none !important; }
 [data-testid="stDecoration"] { display: none !important; }
 
-/* Hide native toggle — replaced by our floating button */
-[data-testid="collapsedControl"] { display: none !important; }
+/* FIX: Force sidebar to stay open and hide collapse arrow */
+[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
 
 [data-testid="stSidebar"] {
     background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
     border-right: 1px solid rgba(0,220,130,0.15);
+    min-width: 320px !important;
 }
+
 [data-testid="stSidebar"] * { color: #c8e6d0 !important; }
 
-.hero-wrap {
-    position: relative;
-    overflow: hidden;
-    border-radius: 20px;
-    padding: 56px 48px 48px;
-    margin-bottom: 36px;
-    background: linear-gradient(125deg, #071e35 0%, #0d3350 55%, #082b1e 100%);
-    border: 1px solid rgba(0,220,130,0.2);
-}
-.hero-wrap::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(ellipse 60% 80% at 80% 20%, rgba(0,220,130,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 10% 90%, rgba(0,120,255,0.08) 0%, transparent 55%);
-    pointer-events: none;
-}
-.hero-tag {
-    display: inline-block;
-    background: rgba(0,220,130,0.15);
-    border: 1px solid rgba(0,220,130,0.4);
-    color: #00dc82;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    padding: 5px 14px;
-    border-radius: 100px;
-    margin-bottom: 18px;
-    font-weight: 500;
-}
-.hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.2rem, 4vw, 3.6rem);
-    font-weight: 800;
-    line-height: 1.1;
-    color: #ffffff;
-    margin: 0 0 14px;
-    letter-spacing: -1px;
-}
-.hero-title span {
-    background: linear-gradient(90deg, #00dc82, #00b4d8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-.hero-sub {
-    color: #7fafc4;
-    font-size: 1.05rem;
-    font-weight: 300;
-    max-width: 520px;
-    line-height: 1.7;
-    margin: 0;
-}
-.hero-year {
-    position: absolute;
-    right: 48px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(5rem, 9vw, 9rem);
-    font-weight: 800;
-    color: rgba(0,220,130,0.06);
-    letter-spacing: -4px;
-    pointer-events: none;
-    user-select: none;
-}
-
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 36px;
-}
-.kpi-card {
-    background: linear-gradient(140deg, #0b1f35 0%, #0d2840 100%);
-    border: 1px solid rgba(0,220,130,0.12);
-    border-radius: 16px;
-    padding: 24px 22px 20px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color .25s, transform .25s;
-}
-.kpi-card:hover {
-    border-color: rgba(0,220,130,0.35);
-    transform: translateY(-3px);
-}
-.kpi-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #00dc82, #00b4d8);
-    border-radius: 2px;
-    opacity: 0.7;
-}
-.kpi-icon  { font-size: 1.5rem; margin-bottom: 10px; display: block; }
-.kpi-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.1rem;
-    font-weight: 700;
-    color: #ffffff;
-    line-height: 1;
-    margin-bottom: 6px;
-}
-.kpi-label {
-    font-size: 0.78rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #5a8fa8;
-    font-weight: 500;
-}
-
-.section-heading {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -0.3px;
-    margin: 0 0 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.section-heading::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(0,220,130,0.12);
-}
-
-[data-testid="stDataFrame"] {
-    border-radius: 14px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(0,220,130,0.1) !important;
-}
-
-hr { border-color: rgba(0,220,130,0.08) !important; }
-
-.sidebar-badge {
-    background: rgba(0,220,130,0.1);
-    border: 1px solid rgba(0,220,130,0.25);
-    border-radius: 12px;
-    padding: 14px 18px;
-    text-align: center;
-    margin-top: 16px;
-}
-.sidebar-badge .sb-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    color: #00dc82;
-    display: block;
-}
-.sidebar-badge .sb-label {
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #5a8fa8;
+/* ... keep your .hero-wrap, .kpi-grid, and other styles below ... */
+.hero-wrap { 
+    /* ... existing hero code ... */
 }
 </style>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<script>
-(function() {
-    function injectBtn() {
-        if (document.getElementById('sb-toggle')) return;
-
-        const btn = document.createElement('button');
-        btn.id = 'sb-toggle';
-        btn.innerHTML = '☰';
-        Object.assign(btn.style, {
-            position:   'fixed',
-            top:        '12px',
-            left:       '12px',
-            zIndex:     '999999',
-            width:      '40px',
-            height:     '40px',
-            background: 'rgba(0,220,130,0.15)',
-            border:     '1px solid rgba(0,220,130,0.4)',
-            borderRadius: '8px',
-            color:      '#00dc82',
-            fontSize:   '18px',
-            cursor:     'pointer',
-            display:    'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s'
-        });
-
-        btn.onmouseenter = () => btn.style.background = 'rgba(0,220,130,0.3)';
-        btn.onmouseleave = () => btn.style.background = 'rgba(0,220,130,0.15)';
-
-        btn.onclick = function() {
-            // 1. Try to find the built-in Open/Close buttons by Aria Label
-            const openBtn = document.querySelector('button[aria-label="Open sidebar"]');
-            const closeBtn = document.querySelector('button[aria-label="Close sidebar"]');
-            
-            if (openBtn) {
-                openBtn.click();
-            } else if (closeBtn) {
-                closeBtn.click();
-            } else {
-                // 2. Fallback: Try targeting the specific Streamlit SVG container for the toggle
-                const fallbackBtn = document.querySelector('.st-emotion-cache-6q9sum button') || 
-                                    document.querySelector('[data-testid="collapsedControl"] button');
-                if (fallbackBtn) fallbackBtn.click();
-            }
-        };
-
-        document.body.appendChild(btn);
-    }
-
-    // Run injection multiple times to ensure it catches the DOM load
-    injectBtn();
-    setInterval(injectBtn, 1000); 
-})();
-</script>
 """, unsafe_allow_html=True)
 
 
