@@ -24,10 +24,10 @@ st.success("✅ Production model loaded! (787 startups trained)")
 
 # Load dataset for reference
 @st.cache_data
-def load_dataset():
+def get_data():
     return pd.read_excel("Finalcompanies.xlsx")
 
-df = load_dataset()
+df = get_data()
 st.sidebar.success(f"📊 {len(df)} startups | MAE: ~3 employees")
 
 # ==================================================

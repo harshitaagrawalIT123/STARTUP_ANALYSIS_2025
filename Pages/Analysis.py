@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-
+import joblib
 
 st.markdown("""
 <style>
@@ -42,7 +42,11 @@ st.markdown("""
 
 st.title("📊 Startup Analysis")
 
-df = pd.read_excel("Finalcompanies.xlsx")
+@st.cache_data
+def get_data():
+    return pd.read_excel("Finalcompanies.xlsx")
+
+df = get_data()
 
 # Spacer
 st.markdown("---")
