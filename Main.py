@@ -13,36 +13,40 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
-/* ── Base reset ── */
 html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
 }
 
-/* ── Background: deep navy + subtle grid ── */
 .stApp {
     background: linear-gradient(135deg, #0a0f1e 0%, #0d1f35 50%, #0a1f15 100%);
     background-attachment: fixed;
 }
-/* ── Remove Streamlit white top bar ── */
+
+/* ── Hide header bar but KEEP it in the DOM so toggle button works ── */
 [data-testid="stHeader"] {
-    display: none !important;
-}
-header {
-    display: none !important;
+    background: transparent !important;
+    border-bottom: none !important;
 }
 [data-testid="stToolbar"] {
     display: none !important;
 }
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+/* ── Style the sidebar toggle button ── */
 [data-testid="collapsedControl"] {
     display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     background: rgba(0, 220, 130, 0.15) !important;
     border: 1px solid rgba(0, 220, 130, 0.3) !important;
     border-radius: 8px !important;
-    color: #00dc82 !important;
 }
 [data-testid="collapsedControl"] svg {
     fill: #00dc82 !important;
 }
+
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
     background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
@@ -184,17 +188,14 @@ header {
     background: rgba(0,220,130,0.12);
 }
 
-/* ── DataFrame tweaks ── */
 [data-testid="stDataFrame"] {
     border-radius: 14px !important;
     overflow: hidden !important;
     border: 1px solid rgba(0,220,130,0.1) !important;
 }
 
-/* ── Divider ── */
 hr { border-color: rgba(0,220,130,0.08) !important; }
 
-/* ── Sidebar metric badge ── */
 .sidebar-badge {
     background: rgba(0,220,130,0.1);
     border: 1px solid rgba(0,220,130,0.25);
