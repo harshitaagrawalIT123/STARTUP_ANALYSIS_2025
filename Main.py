@@ -411,7 +411,7 @@ with col_chart:
                         title="Top Sectors by Number of Startups")
     fig_sector = dt(fig_sector, height=400)
     fig_sector.update_layout(yaxis=dict(categoryorder='total ascending'), showlegend=False)
-    st.plotly_chart(fig_sector, use_container_width=True)
+    st.plotly_chart(fig_sector,width="stretch")
 
 with col_insight:
     top5_sectors = filtered_df['Sector'].value_counts().head(5)
@@ -450,7 +450,7 @@ with col_state:
                        title="Top 10 States")
     fig_state = dt(fig_state, height=380)
     fig_state.update_layout(yaxis=dict(categoryorder='total ascending'), showlegend=False)
-    st.plotly_chart(fig_state, use_container_width=True)
+    st.plotly_chart(fig_state, width="stretch")
 
 with col_city:
     city_counts = filtered_df['Headquarters'].value_counts().head(10).reset_index()
@@ -460,7 +460,7 @@ with col_city:
                       title="Top 10 Cities (HQ)")
     fig_city = dt(fig_city, height=380)
     fig_city.update_layout(yaxis=dict(categoryorder='total ascending'), showlegend=False)
-    st.plotly_chart(fig_city, use_container_width=True)
+    st.plotly_chart(fig_city, width="stretch")
 
 
 # ── SECTION 3: SECTOR × STATE HEATMAP ────────────────────────────────────────
@@ -482,7 +482,7 @@ fig_heat.update_layout(
     coloraxis_colorbar=dict(tickfont=dict(color="#a8c8d8"),
                             title=dict(text="Count", font=dict(color="#a8c8d8")))
 )
-st.plotly_chart(fig_heat, use_container_width=True)
+st.plotly_chart(fig_heat, width="stretch")
 
 
 # ── SECTION 4: DATASET PREVIEW ───────────────────────────────────────────────
@@ -490,7 +490,7 @@ st.markdown("<div class='section-heading'>📋 Dataset Preview</div>", unsafe_al
 
 preview_cols = [c for c in ['Company', 'Sector', 'State', 'Headquarters', 'Team Size']
                 if c in filtered_df.columns]
-st.dataframe(filtered_df[preview_cols].head(10), use_container_width=True, hide_index=True)
+st.dataframe(filtered_df[preview_cols].head(10), width="stretch", hide_index=True)
 
 st.markdown(
     f"<small style='color:#5a8fa8;'>Displaying top 10 of {len(filtered_df):,} records · "

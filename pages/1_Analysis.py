@@ -178,7 +178,7 @@ col1, col2 = st.columns([2, 1])
 with col1:
     fig1 = px.pie(df, names="Sector", title="Sector Breakdown")
     fig1 = dark_theme(fig1)
-    st.plotly_chart(fig1, use_container_width=True)
+    st.plotly_chart(fig1, width="stretch")
 with col2:
     st.markdown("**🔥 Key Insights:**")
     top_sectors = df['Sector'].value_counts().head(3)
@@ -194,7 +194,7 @@ with col1:
     fig2 = px.bar(df.groupby(['Region', 'Sector']).size().reset_index(name='Count'),
                   x='Count', y='Region', color='Sector', orientation='h')
     fig2 = dark_theme(fig2)
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, width="stretch")
 with col2:
     st.markdown("**🌍 Takeaways:**")
     region_counts = df['Region'].value_counts()
@@ -209,7 +209,7 @@ with col1:
     fig3 = px.imshow(pd.crosstab(df['Locality_Tier'], df['Sector']),
                      title='Tier vs Sector Distribution')
     fig3 = dark_theme(fig3)
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(fig3, width="stretch")
 with col2:
     st.markdown("**🏙️ Strategy:**")
     st.markdown("**Tier-1 metros**:")
@@ -265,7 +265,7 @@ with col1:
     fig6 = px.icicle(df_state_top, path=['State', 'Headquarters'],
                      title="Top 8 States → Cities")
     fig6 = dark_theme(fig6)
-    st.plotly_chart(fig6, use_container_width=True)
+    st.plotly_chart(fig6, width="stretch")
 with col2:
     st.markdown("**🗺️ State Leaders:**")
     for i, state in enumerate(top_states):
@@ -296,7 +296,7 @@ with col1:
     fig7.update_yaxes(type="log", tickformat=".0f", range=[5, 9])
     fig7 = dark_theme(fig7)
     fig7.update_layout(showlegend=False)
-    st.plotly_chart(fig7, use_container_width=True)
+    st.plotly_chart(fig7, width="stretch")
 with col2:
     funded_pct = (len(funded_df) / len(df)) * 100
     st.markdown("**💸 Bootstrap Reality:**")

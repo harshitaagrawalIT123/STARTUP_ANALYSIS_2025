@@ -173,7 +173,7 @@ with col_left:
                       color_continuous_scale='Viridis')
     fig1 = dt(fig1, height=420)
     fig1.update_layout(margin=dict(t=40, l=0, r=0, b=0))
-    st.plotly_chart(fig1, use_container_width=True)
+    st.plotly_chart(fig1, width="stretch")
 
 with col_right:
     src4 = filtered_df if state != "All" else df
@@ -183,7 +183,7 @@ with col_right:
                   color_continuous_scale='Plasma')
     fig4 = dt(fig4, height=420)
     fig4.update_layout(yaxis=dict(categoryorder='total ascending'))
-    st.plotly_chart(fig4, use_container_width=True)
+    st.plotly_chart(fig4,width="stretch")
 
 
 # ─── ROW 2: Top Cities (wide) + Top States ────────────────────────────────────
@@ -200,7 +200,7 @@ with col_left:
     fig2.update_traces(textposition='outside', textfont=dict(color='#e8f4f0'))
     fig2.update_layout(showlegend=False,
                        yaxis=dict(categoryorder='total ascending'))
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, width="stretch")
 
 with col_right:
     src3 = filtered_df if sector != "All" else df
@@ -210,7 +210,7 @@ with col_right:
                   color_continuous_scale='Viridis')
     fig3 = dt(fig3, height=460)
     fig3.update_layout(yaxis=dict(categoryorder='total ascending'))
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(fig3, width="stretch")
 
 
 # ─── ROW 3: Sunburst + Box Plot ───────────────────────────────────────────────
@@ -224,7 +224,7 @@ with col_left:
     fig5 = px.sunburst(sun_agg, path=["Sector", "State", "Headquarters"],
                        values="count", title="🌟 Sector → State → City")
     fig5 = dt(fig5, height=460)
-    st.plotly_chart(fig5, use_container_width=True)
+    st.plotly_chart(fig5, width="stretch")
 
 with col_right:
     fig6 = px.box(filtered_df, x='Sector', y='Team_Size_Num',
@@ -234,7 +234,7 @@ with col_right:
         showlegend=False,
         xaxis=dict(tickangle=-30, tickfont=dict(size=10, color="#a8c8d8"))
     )
-    st.plotly_chart(fig6, use_container_width=True)
+    st.plotly_chart(fig6,width="stretch")
 
 
 # ─── ROW 4: Funding Heatmap (full width) ─────────────────────────────────────
@@ -254,6 +254,6 @@ fig7.update_layout(
         tickfont=dict(color="#a8c8d8"),
     )
 )
-st.plotly_chart(fig7, use_container_width=True)
+st.plotly_chart(fig7, width="stretch")
 
 st.sidebar.info(f"**Filtered: {len(filtered_df)} startups**")
