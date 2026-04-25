@@ -6,6 +6,70 @@ import joblib
 
 st.set_page_config(page_title="2025 Startups Dashboard", layout="wide")
 
+# ── Background & theme styling ──────────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* Deep navy + subtle green grid */
+.stApp {
+    background: linear-gradient(135deg, #0a0f1e 0%, #0d1f35 50%, #0a1f15 100%);
+    background-attachment: fixed;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
+    border-right: 1px solid rgba(0,220,130,0.15);
+}
+[data-testid="stSidebar"] * { color: #c8e6d0 !important; }
+
+/* Titles & subheaders */
+h1, h2, h3,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+    font-family: 'Syne', sans-serif !important;
+    color: #ffffff !important;
+}
+
+/* Body text */
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] strong {
+    color: #a8c8d8 !important;
+}
+
+/* HR divider */
+hr { border-color: rgba(0,220,130,0.12) !important; }
+
+/* Metric cards */
+[data-testid="metric-container"] {
+    background: rgba(11,31,53,0.85);
+    border: 1px solid rgba(0,220,130,0.15);
+    border-radius: 12px;
+    padding: 16px !important;
+}
+[data-testid="metric-container"] label { color: #5a8fa8 !important; }
+[data-testid="metric-container"] [data-testid="stMetricValue"] {
+    color: #ffffff !important;
+    font-family: 'Syne', sans-serif !important;
+}
+
+/* Info/warning boxes */
+[data-testid="stAlert"] {
+    background: rgba(11,31,53,0.9) !important;
+    border: 1px solid rgba(0,220,130,0.2) !important;
+    border-radius: 10px !important;
+    color: #a8c8d8 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 @st.cache_data
 def load_data():
     df = pd.read_excel("Finalcompanies.xlsx")
