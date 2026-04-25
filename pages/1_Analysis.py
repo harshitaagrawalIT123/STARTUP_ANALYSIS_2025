@@ -52,7 +52,26 @@ st.markdown("""
     [data-testid="stToolbar"] {
         display: none !important;
     }
-
+    # Replace the header-hiding block with this more targeted version:
+    [data-testid="stHeader"] {
+        background: transparent !important;
+        height: 0 !important;
+        min-height: 0 !important;
+    }
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
+    /* Keep the sidebar toggle button visible */
+    [data-testid="collapsedControl"] {
+        display: flex !important;
+        background: rgba(0, 220, 130, 0.15) !important;
+        border: 1px solid rgba(0, 220, 130, 0.3) !important;
+        border-radius: 8px !important;
+        color: #00dc82 !important;
+    }
+    [data-testid="collapsedControl"] svg {
+        fill: #00dc82 !important;
+    }  
     /* ── Sidebar ── */
     [data-testid="stSidebar"] {
         background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
