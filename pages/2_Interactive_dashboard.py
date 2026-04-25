@@ -21,6 +21,15 @@ html, body, [class*="css"] {
     background-attachment: fixed;
 }
 
+[data-testid="stHeader"] {
+    display: none !important;
+}
+header {
+    display: none !important;
+}
+[data-testid="stToolbar"] {
+    display: none !important;
+}
 /* Sidebar */
 [data-testid="stSidebar"] {
     background: linear-gradient(160deg, #071525 0%, #0b2040 100%);

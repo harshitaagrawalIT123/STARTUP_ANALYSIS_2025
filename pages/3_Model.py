@@ -22,6 +22,16 @@ html, body, [class*="css"] {
     background: linear-gradient(135deg, #0a0f1e 0%, #0d1f35 50%, #0a1f15 100%);
     background-attachment: fixed;
 }
+/* ── Remove Streamlit white top bar ── */
+[data-testid="stHeader"] {
+    display: none !important;
+}
+header {
+    display: none !important;
+}
+[data-testid="stToolbar"] {
+    display: none !important;
+}
 
 /* Sidebar */
 [data-testid="stSidebar"] {
