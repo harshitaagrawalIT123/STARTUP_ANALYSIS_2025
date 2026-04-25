@@ -33,7 +33,16 @@ header {
 [data-testid="stToolbar"] {
     display: none !important;
 }
-
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    background: rgba(0, 220, 130, 0.15) !important;
+    border: 1px solid rgba(0, 220, 130, 0.3) !important;
+    border-radius: 8px !important;
+    color: #00dc82 !important;
+}
+[data-testid="collapsedControl"] svg {
+    fill: #00dc82 !important;
+}
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
     background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
