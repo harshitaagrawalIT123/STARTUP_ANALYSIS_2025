@@ -65,13 +65,16 @@ hr { border-color: rgba(0,220,130,0.12) !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── FLOATING SIDEBAR TOGGLE ───────────────────────────────────────────────────
+# ─── FLOATING SIDEBAR TOGGLE (FIXED) ──────────────────────────────────────────
 st.components.v1.html("""
 <script>
 (function() {
+    const doc = window.parent.document;
+
     function injectBtn() {
-        if (window.parent.document.getElementById('sb-toggle')) return;
-        const btn = window.parent.document.createElement('button');
+        if (doc.getElementById('sb-toggle')) return;
+        
+        const btn = doc.createElement('button');
         btn.id = 'sb-toggle';
         btn.innerHTML = '☰';
         Object.assign(btn.style, {
@@ -90,30 +93,39 @@ st.components.v1.html("""
             display:        'flex',
             alignItems:     'center',
             justifyContent: 'center',
+            transition:     'background 0.3s'
         });
+
+        btn.onclick = function() {
+            // 1. Try to find the 'Open' button first (when sidebar is closed)
+            const openBtn = doc.querySelector('button[aria-label="Open sidebar"]');
+            if (openBtn) {
+                openBtn.click();
+                return;
+            }
+
+            // 2. Try to find the 'Close' button (when sidebar is open)
+            const closeBtn = doc.querySelector('button[aria-label="Close sidebar"]');
+            if (closeBtn) {
+                closeBtn.click();
+                return;
+            }
+
+            // 3. Last resort fallback
+            const fallback = doc.querySelector('[data-testid="stSidebarCollapseButton"] button') || 
+                             doc.querySelector('[data-testid="collapsedControl"] button');
+            if (fallback) fallback.click();
+        };
+
         btn.onmouseenter = () => btn.style.background = 'rgba(0,220,130,0.3)';
         btn.onmouseleave = () => btn.style.background = 'rgba(0,220,130,0.15)';
-        btn.onclick = function() {
-            const doc = window.parent.document;
-            const selectors = [
-                '[data-testid="collapsedControl"] button',
-                '[data-testid="stSidebarCollapseButton"] button',
-                'button[aria-label="Close sidebar"]',
-                'button[aria-label="Open sidebar"]',
-                '[data-testid="stSidebar"] button',
-            ];
-            for (const sel of selectors) {
-                const el = doc.querySelector(sel);
-                if (el) { el.click(); return; }
-            }
-            const sb = doc.querySelector('[data-testid="stSidebar"]');
-            if (sb) sb.style.display = sb.style.display === 'none' ? '' : 'none';
-        };
-        window.parent.document.body.appendChild(btn);
+        
+        doc.body.appendChild(btn);
     }
+
     injectBtn();
-    setTimeout(injectBtn, 500);
-    setTimeout(injectBtn, 2000);
+    // Re-check every second in case Streamlit refreshes the DOM
+    setInterval(injectBtn, 1000);
 })();
 </script>
 """, height=0)

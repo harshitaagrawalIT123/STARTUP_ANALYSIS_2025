@@ -201,7 +201,6 @@ hr { border-color: rgba(0,220,130,0.08) !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── FLOATING SIDEBAR TOGGLE BUTTON ───────────────────────────────────────────
 st.markdown("""
 <script>
 (function() {
@@ -227,34 +226,35 @@ st.markdown("""
             display:    'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            transition: 'all 0.2s'
         });
 
         btn.onmouseenter = () => btn.style.background = 'rgba(0,220,130,0.3)';
         btn.onmouseleave = () => btn.style.background = 'rgba(0,220,130,0.15)';
 
         btn.onclick = function() {
-            const selectors = [
-                '[data-testid="collapsedControl"] button',
-                '[data-testid="stSidebarCollapseButton"] button',
-                'button[aria-label="Close sidebar"]',
-                'button[aria-label="Open sidebar"]',
-                '[data-testid="stSidebar"] button',
-            ];
-            for (const sel of selectors) {
-                const el = document.querySelector(sel);
-                if (el) { el.click(); return; }
+            // 1. Try to find the built-in Open/Close buttons by Aria Label
+            const openBtn = document.querySelector('button[aria-label="Open sidebar"]');
+            const closeBtn = document.querySelector('button[aria-label="Close sidebar"]');
+            
+            if (openBtn) {
+                openBtn.click();
+            } else if (closeBtn) {
+                closeBtn.click();
+            } else {
+                // 2. Fallback: Try targeting the specific Streamlit SVG container for the toggle
+                const fallbackBtn = document.querySelector('.st-emotion-cache-6q9sum button') || 
+                                    document.querySelector('[data-testid="collapsedControl"] button');
+                if (fallbackBtn) fallbackBtn.click();
             }
-            // Last resort: toggle sidebar width
-            const sb = document.querySelector('[data-testid="stSidebar"]');
-            if (sb) sb.style.display = sb.style.display === 'none' ? '' : 'none';
         };
 
         document.body.appendChild(btn);
     }
 
+    // Run injection multiple times to ensure it catches the DOM load
     injectBtn();
-    setTimeout(injectBtn, 500);
-    setTimeout(injectBtn, 2000);
+    setInterval(injectBtn, 1000); 
 })();
 </script>
 """, unsafe_allow_html=True)

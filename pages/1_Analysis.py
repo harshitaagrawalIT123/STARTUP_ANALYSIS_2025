@@ -83,60 +83,64 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ─── FLOATING SIDEBAR TOGGLE ───────────────────────────────────────────────────
+# ─── FLOATING SIDEBAR TOGGLE (ROBUST VERSION) ──────────────────────────────────
 st.components.v1.html("""
 <script>
 (function() {
+    const doc = window.parent.document;
+    
     function injectBtn() {
-        if (window.parent.document.getElementById('sb-toggle')) return;
+        if (doc.getElementById('sb-toggle')) return;
 
-        const btn = window.parent.document.createElement('button');
+        const btn = doc.createElement('button');
         btn.id = 'sb-toggle';
         btn.innerHTML = '☰';
         Object.assign(btn.style, {
-            position:       'fixed',
-            top:            '12px',
-            left:           '12px',
-            zIndex:         '999999',
-            width:          '40px',
-            height:         '40px',
-            background:     'rgba(0,220,130,0.15)',
-            border:         '1px solid rgba(0,220,130,0.4)',
-            borderRadius:   '8px',
-            color:          '#00dc82',
-            fontSize:       '18px',
-            cursor:         'pointer',
-            display:        'flex',
-            alignItems:     'center',
+            position: 'fixed',
+            top: '12px',
+            left: '12px',
+            zIndex: '999999',
+            width: '40px',
+            height: '40px',
+            background: 'rgba(0,220,130,0.15)',
+            border: '1px solid rgba(0,220,130,0.4)',
+            borderRadius: '8px',
+            color: '#00dc82',
+            fontSize: '18px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'center',
+            transition: 'background 0.3s'
         });
+
+        btn.onclick = function() {
+            // Try to find the 'Open' button first (if sidebar is closed)
+            const openBtn = doc.querySelector('button[aria-label="Open sidebar"]');
+            // Try to find the 'Close' button (if sidebar is open)
+            const closeBtn = doc.querySelector('button[aria-label="Close sidebar"]');
+            
+            if (openBtn) {
+                openBtn.click();
+            } else if (closeBtn) {
+                closeBtn.click();
+            } else {
+                // Fallback: search for the specific SVG icon container Streamlit uses
+                const fallback = doc.querySelector('[data-testid="stSidebarCollapseButton"] button') || 
+                                 doc.querySelector('[data-testid="collapsedControl"] button');
+                if (fallback) fallback.click();
+            }
+        };
 
         btn.onmouseenter = () => btn.style.background = 'rgba(0,220,130,0.3)';
         btn.onmouseleave = () => btn.style.background = 'rgba(0,220,130,0.15)';
-
-        btn.onclick = function() {
-            const selectors = [
-                '[data-testid="collapsedControl"] button',
-                '[data-testid="stSidebarCollapseButton"] button',
-                'button[aria-label="Close sidebar"]',
-                'button[aria-label="Open sidebar"]',
-                '[data-testid="stSidebar"] button',
-            ];
-            const doc = window.parent.document;
-            for (const sel of selectors) {
-                const el = doc.querySelector(sel);
-                if (el) { el.click(); return; }
-            }
-            const sb = doc.querySelector('[data-testid="stSidebar"]');
-            if (sb) sb.style.display = sb.style.display === 'none' ? '' : 'none';
-        };
-
-        window.parent.document.body.appendChild(btn);
+        
+        doc.body.appendChild(btn);
     }
 
+    // Run immediately and then check periodically if the button was removed by a page refresh
     injectBtn();
-    setTimeout(injectBtn, 500);
-    setTimeout(injectBtn, 2000);
+    setInterval(injectBtn, 1000);
 })();
 </script>
 """, height=0)
