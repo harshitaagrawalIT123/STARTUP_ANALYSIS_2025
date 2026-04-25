@@ -22,39 +22,22 @@ html, body, [class*="css"] {
     background-attachment: fixed;
 }
 
-/* ── Hide header bar but KEEP it in the DOM so toggle button works ── */
 [data-testid="stHeader"] {
     background: transparent !important;
     border-bottom: none !important;
 }
-[data-testid="stToolbar"] {
-    display: none !important;
-}
-[data-testid="stDecoration"] {
-    display: none !important;
-}
+[data-testid="stToolbar"]    { display: none !important; }
+[data-testid="stDecoration"] { display: none !important; }
 
-/* ── Style the sidebar toggle button ── */
-[data-testid="collapsedControl"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    background: rgba(0, 220, 130, 0.15) !important;
-    border: 1px solid rgba(0, 220, 130, 0.3) !important;
-    border-radius: 8px !important;
-}
-[data-testid="collapsedControl"] svg {
-    fill: #00dc82 !important;
-}
+/* Hide native toggle — replaced by our floating button */
+[data-testid="collapsedControl"] { display: none !important; }
 
-/* ── Sidebar ── */
 [data-testid="stSidebar"] {
     background: linear-gradient(160deg, #071525 0%, #0b2040 100%);
     border-right: 1px solid rgba(0,220,130,0.15);
 }
 [data-testid="stSidebar"] * { color: #c8e6d0 !important; }
 
-/* ── Hero banner ── */
 .hero-wrap {
     position: relative;
     overflow: hidden;
@@ -123,7 +106,6 @@ html, body, [class*="css"] {
     user-select: none;
 }
 
-/* ── KPI cards ── */
 .kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -152,7 +134,7 @@ html, body, [class*="css"] {
     border-radius: 2px;
     opacity: 0.7;
 }
-.kpi-icon { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+.kpi-icon  { font-size: 1.5rem; margin-bottom: 10px; display: block; }
 .kpi-value {
     font-family: 'Syne', sans-serif;
     font-size: 2.1rem;
@@ -169,7 +151,6 @@ html, body, [class*="css"] {
     font-weight: 500;
 }
 
-/* ── Section heading ── */
 .section-heading {
     font-family: 'Syne', sans-serif;
     font-size: 1.1rem;
@@ -220,6 +201,64 @@ hr { border-color: rgba(0,220,130,0.08) !important; }
 </style>
 """, unsafe_allow_html=True)
 
+# ─── FLOATING SIDEBAR TOGGLE BUTTON ───────────────────────────────────────────
+st.markdown("""
+<script>
+(function() {
+    function injectBtn() {
+        if (document.getElementById('sb-toggle')) return;
+
+        const btn = document.createElement('button');
+        btn.id = 'sb-toggle';
+        btn.innerHTML = '☰';
+        Object.assign(btn.style, {
+            position:   'fixed',
+            top:        '12px',
+            left:       '12px',
+            zIndex:     '999999',
+            width:      '40px',
+            height:     '40px',
+            background: 'rgba(0,220,130,0.15)',
+            border:     '1px solid rgba(0,220,130,0.4)',
+            borderRadius: '8px',
+            color:      '#00dc82',
+            fontSize:   '18px',
+            cursor:     'pointer',
+            display:    'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        });
+
+        btn.onmouseenter = () => btn.style.background = 'rgba(0,220,130,0.3)';
+        btn.onmouseleave = () => btn.style.background = 'rgba(0,220,130,0.15)';
+
+        btn.onclick = function() {
+            const selectors = [
+                '[data-testid="collapsedControl"] button',
+                '[data-testid="stSidebarCollapseButton"] button',
+                'button[aria-label="Close sidebar"]',
+                'button[aria-label="Open sidebar"]',
+                '[data-testid="stSidebar"] button',
+            ];
+            for (const sel of selectors) {
+                const el = document.querySelector(sel);
+                if (el) { el.click(); return; }
+            }
+            // Last resort: toggle sidebar width
+            const sb = document.querySelector('[data-testid="stSidebar"]');
+            if (sb) sb.style.display = sb.style.display === 'none' ? '' : 'none';
+        };
+
+        document.body.appendChild(btn);
+    }
+
+    injectBtn();
+    setTimeout(injectBtn, 500);
+    setTimeout(injectBtn, 2000);
+})();
+</script>
+""", unsafe_allow_html=True)
+
 
 # ─── DATA ─────────────────────────────────────────────────────────────────────
 @st.cache_data
@@ -265,7 +304,8 @@ with st.sidebar:
     if selected_state != "All States":
         filtered_df = filtered_df[filtered_df['State'] == selected_state]
 
-    st.markdown(f"<br><small style='color:#5a8fa8;'>Showing **{len(filtered_df):,}** results</small>", unsafe_allow_html=True)
+    st.markdown(f"<br><small style='color:#5a8fa8;'>Showing **{len(filtered_df):,}** results</small>",
+                unsafe_allow_html=True)
 
 
 # ─── HERO ─────────────────────────────────────────────────────────────────────
@@ -319,4 +359,5 @@ st.dataframe(
     hide_index=True,
 )
 
-st.markdown(f"<small style='color:#5a8fa8;'>Displaying top 10 of {len(filtered_df):,} records · Use sidebar filters to refine</small>", unsafe_allow_html=True)
+st.markdown(f"<small style='color:#5a8fa8;'>Displaying top 10 of {len(filtered_df):,} records · Use sidebar filters to refine</small>",
+            unsafe_allow_html=True)
